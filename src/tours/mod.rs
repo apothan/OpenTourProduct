@@ -2,6 +2,7 @@
 
 pub mod handler;
 pub mod repository;
+pub mod category;
 use mongodb::bson;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -10,12 +11,14 @@ pub struct Tour {
     pub id: Option<bson::oid::ObjectId>,
     pub name: Option<String>,
     pub category: Option<String>,
+    pub categories: Vec<category::Category>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct InsertableTour {
     pub name: Option<String>,
     pub category: Option<String>,
+    pub categories: Vec<category::Category>,
 }
 
 impl InsertableTour {
@@ -23,6 +26,7 @@ impl InsertableTour {
         InsertableTour {
             name: tours.name,
             category: tours.category,
+            categories: tours.categories,
         }
     }
 }

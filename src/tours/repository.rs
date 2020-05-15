@@ -21,6 +21,7 @@ pub fn all(connection: &Conn) -> Result<Vec<Tour>, Error> {
 }
 
 pub fn get(id: ObjectId, connection: &Conn) -> Result<Option<Tour>, Error> {
+
     match connection
         .collection(COLLECTION)
         .find_one(Some(doc! {"_id": id}), None)
@@ -36,6 +37,7 @@ pub fn get(id: ObjectId, connection: &Conn) -> Result<Option<Tour>, Error> {
         },
         Err(err) => Err(err),
     }
+    
 }
 
 pub fn insert(tours: Tour, connection: &Conn) -> Result<ObjectId, Error> {
