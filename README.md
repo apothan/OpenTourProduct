@@ -1,6 +1,6 @@
 ## OpenTourProduct
 
-#Installation
+### Installation
 
 git clone https://github.com/apothan/OpenTourProduct.git
 cargo run
