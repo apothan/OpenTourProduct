@@ -2,7 +2,9 @@ use actix_web::{web, App, HttpServer};
 use r2d2::Pool;
 use r2d2_mongodb::{ConnectionOptions, MongodbConnectionManager};
 
-mod tour;
+mod controller;
+mod model;
+mod repository;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -18,8 +20,8 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .data(pool.clone())
-            .route("/hello", web::get().to(tour::controller::index))
-            .route("/get", web::get().to(tour::controller::get))
+            .route("/hello", web::get().to(controller::tourcontroller::index))
+            .route("/get", web::get().to(controller::tourcontroller::get))
     })
     .bind("127.0.0.1:3000")?
     .run()
