@@ -20,10 +20,11 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .data(pool.clone())
-            .route("/hello", web::get().to(controller::tourcontroller::index))
+            .route("/", web::get().to(controller::tourcontroller::index))
+            .route("/insert", web::get().to(controller::tourcontroller::insert))
             .route("/get", web::get().to(controller::tourcontroller::get))
     })
-    .bind("127.0.0.1:3000")?
+    .bind("127.0.0.1:8010")?
     .run()
     .await
 }
