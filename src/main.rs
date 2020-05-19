@@ -24,6 +24,7 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(controller::tourcontroller::index))
             .route("/insert", web::post().to(controller::tourcontroller::insert))
             .route("/get/{product_id}", web::get().to(controller::tourcontroller::get))
+            .route("/delete/{product_id}", web::get().to(controller::tourcontroller::delete))
     })
     .bind("127.0.0.1:8010")?
     .run()

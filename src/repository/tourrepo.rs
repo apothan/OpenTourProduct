@@ -1,6 +1,6 @@
 use actix_web::web;
 use mongodb::db::ThreadedDatabase;
-use mongodb::{bson, doc, error::Error, oid::ObjectId};
+use mongodb::{bson, coll::results::DeleteResult, doc, error::Error, oid::ObjectId};
 use r2d2::Pool;
 use r2d2_mongodb::MongodbConnectionManager;
 
@@ -53,26 +53,37 @@ pub fn insert(
 }
   
 pub fn get(
-    product_id: ObjectId,
-    connection: web::Data<Pool<MongodbConnectionManager>>,
+  product_id: ObjectId,
+  connection: web::Data<Pool<MongodbConnectionManager>>,
 ) -> Result<Option<Tour>, Error> {
-    //println!("{}", product_id);
+  //println!("{}", product_id);
 
-    match connection
-      .get()
-      .expect("can not get pool")
-      .collection("tours")
-      .find_one(Some(doc! { "_id":  product_id}), None)
-      {
-        Ok(db_result) => match db_result {
-            Some(result_doc) => match bson::from_bson(bson::Bson::Document(result_doc)) {
-                Ok(result_model) => Ok(Some(result_model)),
-                Err(_) => Err(Error::DefaultError(String::from(
-                    "Failed to create reverse BSON",
-                ))),
-            },
-            None => Ok(None),
+  match connection
+    .get()
+    .expect("can not get pool")
+    .collection("tours")
+    .find_one(Some(doc! { "_id":  product_id}), None)
+    {
+      Ok(db_result) => match db_result {
+        Some(result_doc) => match bson::from_bson(bson::Bson::Document(result_doc)) {
+          Ok(result_model) => Ok(Some(result_model)),
+          Err(_) => Err(Error::DefaultError(String::from(
+            "Failed to create reverse BSON",
+          ))),
         },
-        Err(err) => Err(err),
-      }
+        None => Ok(None),
+      },
+      Err(err) => Err(err),
+    }
+}
+
+pub fn delete(
+  id: ObjectId, 
+  connection: web::Data<Pool<MongodbConnectionManager>>,
+) -> Result<DeleteResult, Error> {
+  connection
+    .get()
+    .expect("can not get pool")
+    .collection("tours")
+    .delete_one(doc! {"_id": id}, None)
 }

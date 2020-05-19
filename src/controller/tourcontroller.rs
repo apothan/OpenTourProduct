@@ -18,9 +18,9 @@ pub async fn index(
 ) -> Result<Result<HttpResponse, HttpResponse>, Error>{
     
     let res = web::block(move || tourrepo::all(pool))
-    .await
-    .map(|_result| HttpResponse::Ok().json(_result))
-    .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
+        .await
+        .map(|_result| HttpResponse::Ok().json(_result))
+        .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
     Ok(res)
 }
 
@@ -29,9 +29,9 @@ pub async fn insert(
     pool: web::Data<Pool<MongodbConnectionManager>>,
 ) -> Result<Result<HttpResponse, HttpResponse>, Error>{
     let res = web::block(move || tourrepo::insert(tour.into_inner(), pool))
-    .await
-    .map(|_result| HttpResponse::Ok().body("Success"))
-    .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
+        .await
+        .map(|_result| HttpResponse::Ok().body("Success"))
+        .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
     Ok(res)
 }
 
@@ -46,9 +46,17 @@ pub async fn get(
         .map(|_result| HttpResponse::Ok().json(_result))
         .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
     Ok(res)
+}
 
-   
-    //println!("{}", get_var);
-    //let product_id = ObjectId(info.product_id);
-    
+pub async fn delete(
+    info: web::Path<Info>,
+    pool: web::Data<Pool<MongodbConnectionManager>>,
+) -> Result<Result<HttpResponse, HttpResponse>, Error> {
+
+    let product_id = ObjectId::with_string(&info.product_id).unwrap();
+    let res = web::block(move || tourrepo::delete(product_id, pool))
+        .await
+        .map(|_result| HttpResponse::Ok().body("Success"))
+        .map_err(|_| HttpResponse::new(http::StatusCode::INTERNAL_SERVER_ERROR));
+    Ok(res)
 }
