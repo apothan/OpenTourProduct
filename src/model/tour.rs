@@ -1,23 +1,27 @@
-use serde::{Serialize,Deserialize};
-use mongodb::bson;
+use crate::schema::tour;
+use chrono::NaiveDateTime;
+use diesel::MysqlConnection;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct Tour {
-  #[serde(rename = "_id")]  // Use MongoDB's special primary key field name when serializing
-  pub id: Option<bson::oid::ObjectId>,
-  pub name: String,
+    pub id: String,
+    pub name: String,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct InsertableTour {
-  pub name: String,
-}
+#[derive(Serialize, Deserialize)]
+pub struct Tours(pub Vec<Tour>);
 
-impl InsertableTour {
-  pub fn from_tour(tour: Tour) -> InsertableTour {
-      InsertableTour {
-          name: tour.name,
-      }
-  }
-}
+impl Tours {
+    pub fn list(connection: &MysqlConnection) -> Self {
+        use crate::schema::tour::dsl::*;
+        use diesel::QueryDsl;
+        use diesel::RunQueryDsl;
 
+        let result = tour
+            .limit(10)
+            .load::<Tour>(connection)
+            .expect("Error loading tours");
+
+        Tours(result)
+    }
+}

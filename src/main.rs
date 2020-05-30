@@ -1,32 +1,39 @@
+#[macro_use]
+extern crate diesel;
+extern crate dotenv;
+extern crate serde;
+extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
+
+#[macro_use]
+extern crate dotenv_codegen;
+
+pub mod db;
+pub mod handlers;
+pub mod model;
+pub mod schema;
+
+use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
-use r2d2::Pool;
-use r2d2_mongodb::{ConnectionOptions, MongodbConnectionManager};
-
-
-mod controller;
-mod model;
-mod repository;
+use db::connect;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    let manager = MongodbConnectionManager::new(
-        ConnectionOptions::builder()
-            .with_host("localhost", 27017)
-            .with_db("products")
-            .build(),
-    );
-    println!("Database connected!");
-    let pool = Pool::builder().max_size(10).build(manager).unwrap();
+    std::env::set_var("RUST_LOG", "actix_web=debug");
+    // let sys = actix::System::new("user_sync");
+    env_logger::init();
 
-    HttpServer::new(move || {
+    HttpServer::new(|| {
         App::new()
-            .data(pool.clone())
-            .route("/", web::get().to(controller::tourcontroller::index))
-            .route("/insert", web::post().to(controller::tourcontroller::insert))
-            .route("/get/{product_id}", web::get().to(controller::tourcontroller::get))
-            .route("/delete/{product_id}", web::get().to(controller::tourcontroller::delete))
+            .data(connect())
+            .service(web::resource("/").route(web::get().to(handlers::tours::get)))
     })
-    .bind("127.0.0.1:8010")?
+    .bind("127.0.0.1:8088")
+    .unwrap()
     .run()
     .await
+
+    //println!("Started http server: 127.0.0.1:8088");
+    //let _ = sys.run();
 }
