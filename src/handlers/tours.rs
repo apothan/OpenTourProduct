@@ -1,7 +1,7 @@
-use crate::model::tour::Tour;
+use crate::model::tour::TourForm;
 use actix_web::web;
 use actix_web::{HttpRequest, HttpResponse};
-use std::io::Error;
+//use std::io::Error;
 
 use crate::db::{MySqlPooledConnection, MysqlPool};
 use crate::model::tour::Tours;
@@ -26,6 +26,18 @@ pub async fn get(
 ) -> Result<HttpResponse, HttpResponse> {
     let mysql_pool = mysql_pool_handler(pool)?;
     Ok(HttpResponse::Ok().json(Tours::list(&mysql_pool)))
+}
+
+pub async fn insert(
+    tour: web::Json<TourForm>,
+    pool: web::Data<MysqlPool>,
+) -> Result<HttpResponse, HttpResponse> {
+    println!("recevied test call!");
+    let mysql_pool = mysql_pool_handler(pool)?;
+    Ok(HttpResponse::Ok().json(Tours::insert(tour, &mysql_pool)))
+
+    //Ok(HttpResponse::Ok().json(tour.0))
+     // <- send response
 }
 
 // NOTE: testing connection without DB

@@ -14,7 +14,7 @@ pub mod handlers;
 pub mod model;
 pub mod schema;
 
-use actix_web::middleware::Logger;
+//use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
 use db::connect;
 
@@ -26,8 +26,10 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
+            .data(web::JsonConfig::default().limit(4096))
             .data(connect())
             .service(web::resource("/").route(web::get().to(handlers::tours::get)))
+            .service(web::resource("/insert").route(web::post().to(handlers::tours::insert)))
     })
     .bind("127.0.0.1:8088")
     .unwrap()

@@ -1,5 +1,5 @@
 table! {
-    tours (id) {
+    tour (id) {
         id -> Varchar,
         name -> Varchar,
     }

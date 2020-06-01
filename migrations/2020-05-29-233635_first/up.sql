@@ -1,4 +1,4 @@
-CREATE TABLE tours (
+CREATE TABLE tour (
     id VARCHAR(36) NOT NULL PRIMARY KEY, 
     name VARCHAR(200) NOT NULL
 );

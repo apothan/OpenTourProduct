@@ -1,5 +1,5 @@
 use crate::schema::tour;
-use chrono::NaiveDateTime;
+//use chrono::NaiveDateTime;
 use diesel::MysqlConnection;
 
 #[derive(Queryable, Serialize, Deserialize)]
@@ -10,6 +10,12 @@ pub struct Tour {
 
 #[derive(Serialize, Deserialize)]
 pub struct Tours(pub Vec<Tour>);
+
+#[derive(Serialize, Deserialize, Insertable)]
+#[table_name = "tour"]
+pub struct TourForm {
+    pub name: String,
+}
 
 impl Tours {
     pub fn list(connection: &MysqlConnection) -> Self {
@@ -23,5 +29,16 @@ impl Tours {
             .expect("Error loading tours");
 
         Tours(result)
+    }
+    pub fn insert(
+        tour_form: web::Json<TourForm>,
+        connection: &MysqlConnection
+    ) -> Self {
+        use crate::schema::tour::dsl::*;
+        use diesel::insert_into;
+
+        insert_into(tour).values(&tour_form).execute(connection)?;
+
+        Ok(())
     }
 }
