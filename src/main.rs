@@ -24,6 +24,15 @@ async fn main() -> std::io::Result<()> {
     // let sys = actix::System::new("user_sync");
     env_logger::init();
 
+    // load ssl keys
+    /*
+    let mut builder = SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
+    builder
+        .set_private_key_file("key.pem", SslFiletype::PEM)
+        .unwrap();
+    builder.set_certificate_chain_file("cert.pem").unwrap();
+    */
+
     HttpServer::new(|| {
         App::new()
             .data(web::JsonConfig::default().limit(4096))
@@ -35,7 +44,9 @@ async fn main() -> std::io::Result<()> {
     .unwrap()
     .run()
     .await
-
-    //println!("Started http server: 127.0.0.1:8088");
-    //let _ = sys.run();
+    /*
+    .bind_openssl("127.0.0.1:8443", builder)?
+    .run()
+    .await
+    */
 }
