@@ -1,1 +1,1 @@
-DROP TABLE tours;
+DROP TABLE tour;

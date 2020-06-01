@@ -11,7 +11,7 @@ pub struct Tour {
 #[derive(Serialize, Deserialize)]
 pub struct Tours(pub Vec<Tour>);
 
-#[derive(Serialize, Deserialize, Insertable)]
+#[derive(Serialize, Deserialize, Insertable, Debug)]
 #[table_name = "tour"]
 pub struct TourForm {
     pub name: String,
@@ -30,15 +30,20 @@ impl Tours {
 
         Tours(result)
     }
+    
     pub fn insert(
-        tour_form: web::Json<TourForm>,
+        tour_form: TourForm,
         connection: &MysqlConnection
-    ) -> Self {
+    ) -> bool {
+        
+        println!("recevied test call!");
         use crate::schema::tour::dsl::*;
         use diesel::insert_into;
+        use diesel::RunQueryDsl;
 
-        insert_into(tour).values(&tour_form).execute(connection)?;
+        insert_into(tour).values(&tour_form).execute(connection);
 
-        Ok(())
+        return true
     }
+    
 }

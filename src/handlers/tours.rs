@@ -32,11 +32,19 @@ pub async fn insert(
     tour: web::Json<TourForm>,
     pool: web::Data<MysqlPool>,
 ) -> Result<HttpResponse, HttpResponse> {
-    println!("recevied test call!");
-    let mysql_pool = mysql_pool_handler(pool)?;
-    Ok(HttpResponse::Ok().json(Tours::insert(tour, &mysql_pool)))
 
-    //Ok(HttpResponse::Ok().json(tour.0))
+    //println!("model: {:?}", &item);
+    //HttpResponse::Ok().json(item.0)
+
+    //let serialized = serde_json::to_string(&tour_form).unwrap();
+
+        // Prints serialized = {"x":1,"y":2}
+    //println!("serialized = {:#?}", tour_form);
+    
+    let mysql_pool = mysql_pool_handler(pool)?;
+    Ok(HttpResponse::Ok().json(Tours::insert(tour.0, &mysql_pool)))
+    //Ok(())
+    //Ok(HttpResponse::Ok().json(&item.0))
      // <- send response
 }
 
